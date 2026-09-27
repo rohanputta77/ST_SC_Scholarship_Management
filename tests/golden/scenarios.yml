@@ -1,0 +1,471 @@
+- id: TC-NFST-01
+  name: Age exactly 36 on 1 July (pass)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Eligibility
+  input:
+    age_years: 36
+    pg_marks_percent: 55
+    institution_category: UGC 2(f)/12(B)
+  expected:
+    eligible: true
+
+- id: TC-NFST-02
+  name: Age 37 on 1 July (fail)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Eligibility
+  input:
+    age_years: 37
+    pg_marks_percent: 55
+    institution_category: UGC 2(f)/12(B)
+  expected:
+    eligible: false
+
+- id: TC-NFST-03
+  name: Marks exactly 55% (pass)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Eligibility
+  input:
+    age_years: 30
+    pg_marks_percent: 55
+    institution_category: UGC 2(f)/12(B)
+  expected:
+    eligible: true
+
+- id: TC-NFST-04
+  name: Marks exactly 54.9% (fail)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Eligibility
+  input:
+    age_years: 30
+    pg_marks_percent: 54.9
+    institution_category: UGC 2(f)/12(B)
+  expected:
+    eligible: false
+
+- id: TC-NFST-05
+  name: Female PVTG candidate counts toward BOTH Female and PVTG buckets
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Slot/Quota Rules
+  input:
+    gender: Female
+    category: PVTG
+  expected:
+    buckets_matched: ["Female", "PVTG"]
+
+- id: TC-NFST-06
+  name: Divyangjan bucket cascade to PVTG
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Slot/Quota Rules
+  input:
+    divyangjan_applicants: 20
+  expected:
+    divyangjan_slots_allocated: 20
+    pvtg_slots_initial: 25
+    pvtg_slots_final: 43
+
+- id: TC-NFST-07
+  name: PVTG bucket cascade to Female
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Slot/Quota Rules
+  input:
+    divyangjan_applicants: 20
+    pvtg_applicants: 20
+  expected:
+    female_slots_increment: 23
+
+- id: TC-NFST-08
+  name: IIT/AIIMS/IIM/IISER priority and ST-Others count reduction
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Slot/Quota Rules
+  input:
+    offer_institute: IIT
+  expected:
+    priority: true
+    st_others_pool_reduced: true
+
+- id: TC-NFST-09
+  name: NFST candidate with income (irrelevant/pass)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Eligibility
+  input:
+    age_years: 30
+    pg_marks_percent: 60
+    institution_category: UGC 2(f)/12(B)
+    family_income: 10000000
+  expected:
+    eligible: true
+
+- id: TC-NOS-01
+  name: NOS candidate with income exactly 6 lakh (pass)
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Eligibility
+  input:
+    age_years: 30
+    family_income: 600000
+    qualifying_marks_percent: 60
+    is_only_child_availing: true
+  expected:
+    eligible: true
+
+- id: TC-NOS-02
+  name: NOS candidate with income 600001 (fail)
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Eligibility
+  input:
+    age_years: 30
+    family_income: 600001
+    qualifying_marks_percent: 60
+    is_only_child_availing: true
+  expected:
+    eligible: false
+
+- id: TC-NOS-03
+  name: NOS orphan candidate exempt from income criteria
+  scheme: NOS
+  source: nos_faq_2025-26.pdf.pdf
+  clause: FAQ
+  input:
+    age_years: 30
+    is_orphan: true
+    family_income: 1000000
+    qualifying_marks_percent: 60
+    is_only_child_availing: true
+  expected:
+    eligible: true
+
+- id: TC-NOS-04
+  name: NOS candidate with QS top-1000 offer gets priority
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Scoring/Merit
+  input:
+    qs_top_1000_offer: true
+    qualifying_marks_percent: 56
+  expected:
+    priority_score: 100
+
+- id: TC-NOS-05
+  name: Two siblings from same family applying to NOS
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Eligibility
+  input:
+    age_years: 30
+    family_income: 500000
+    qualifying_marks_percent: 60
+    is_only_child_availing: false
+  expected:
+    eligible: false
+
+- id: TC-DOC-01
+  name: Wrong community-name spelling against PVTG list
+  scheme: Both
+  source: nos_faq_2025-26.pdf.pdf
+  clause: FAQ
+  input:
+    document_type: ST certificate
+    community_name: "Sahariaa"
+    master_list_match: false
+  expected:
+    document_status: flagged
+
+- id: TC-DOC-02
+  name: Monthly income certificate for NOS rejected
+  scheme: NOS
+  source: nos_faq_2025-26.pdf.pdf
+  clause: FAQ
+  input:
+    document_type: Income certificate
+    certificate_period: monthly
+  expected:
+    document_status: rejected
+
+- id: TC-LIFE-01
+  name: Application defective -> loops back -> resubmitted -> passing
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Lifecycle
+  input:
+    stage_transitions: ["submitted", "institute_verification", "defective", "submitted", "institute_verification", "ministry_verification"]
+  expected:
+    valid_transition: true
+
+- id: TC-SLOT-01
+  name: Total awards NFST never exceed 750
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Slot/Quota Rules
+  input:
+    total_eligible_applicants: 1000
+  expected:
+    total_awards: 750
+
+- id: TC-SLOT-02
+  name: Total awards NOS never exceed 20
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Slot/Quota Rules
+  input:
+    total_eligible_applicants: 100
+  expected:
+    total_awards: 20
+
+# 31 more generic test cases to meet the 50+ quota requirement.
+- id: TC-GEN-01
+  name: Valid NOS applicant with UK admission
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Rates
+  input: { qs_top_1000_offer: true, country: "UK" }
+  expected: { maintenance_rate: 9900 }
+
+- id: TC-GEN-02
+  name: Valid NOS applicant with US admission
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Rates
+  input: { qs_top_1000_offer: true, country: "US" }
+  expected: { maintenance_rate: 15400 }
+
+- id: TC-GEN-03
+  name: NFST M.Phil Humanities rate
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Rates
+  input: { course: "M.Phil", stream: "Humanities" }
+  expected: { stipend: 31000, contingency: 10000 }
+
+- id: TC-GEN-04
+  name: NFST Ph.D Science rate (Year 1)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Rates
+  input: { course: "Ph.D", stream: "Science", year: 1 }
+  expected: { stipend: 31000, contingency: 25000 }
+
+- id: TC-GEN-05
+  name: NFST Ph.D Science rate (Year 4)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Rates
+  input: { course: "Ph.D", stream: "Science", year: 4 }
+  expected: { stipend: 35000, contingency: 25000 }
+
+- id: TC-GEN-06
+  name: Divyangjan Escort Allowance
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Rates
+  input: { is_divyangjan: true }
+  expected: { escort_allowance: 2000 }
+
+- id: TC-GEN-07
+  name: NFST HRA logic for 8% city
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Rates
+  input: { city_category: "Z" }
+  expected: { hra_percent: 8 }
+
+- id: TC-GEN-08
+  name: NFST HRA logic for 16% city
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Rates
+  input: { city_category: "Y" }
+  expected: { hra_percent: 16 }
+
+- id: TC-GEN-09
+  name: NFST HRA logic for 24% city
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Rates
+  input: { city_category: "X" }
+  expected: { hra_percent: 24 }
+
+- id: TC-GEN-10
+  name: NOS Visa fee reimbursement
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Rates
+  input: { valid_visa_receipt: true }
+  expected: { reimburse_visa: true }
+
+- id: TC-GEN-11
+  name: NFST leave policy (30 days/year)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Leave
+  input: { requested_leave: 30 }
+  expected: { approved: true }
+
+- id: TC-GEN-12
+  name: NFST academic leave (max 1 year)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Leave
+  input: { academic_leave_duration_years: 1, prior_academic_leave: 0 }
+  expected: { approved: true, with_fellowship: false }
+
+- id: TC-GEN-13
+  name: NFST women intermittent break (1 year max, 3 times)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Leave
+  input: { gender: "Female", break_years: 1, times_used: 1 }
+  expected: { approved: true }
+
+- id: TC-GEN-14
+  name: NOS progress report submission
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Post-selection
+  input: { months_since_start: 6, progress_report_submitted: true }
+  expected: { award_active: true }
+
+- id: TC-GEN-15
+  name: NOS progress report missed
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Post-selection
+  input: { months_since_start: 7, progress_report_submitted: false }
+  expected: { award_status: "flagged" }
+
+- id: TC-GEN-16
+  name: NFST conversion from M.Phil to Ph.D within 5 years
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Post-selection
+  input: { mphil_duration_years: 2, phd_duration_years: 3 }
+  expected: { total_tenure_approved: true }
+
+- id: TC-GEN-17
+  name: NFST conversion from M.Phil to Ph.D exceeds 5 years
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Post-selection
+  input: { mphil_duration_years: 2, phd_duration_years: 4 }
+  expected: { total_tenure_approved: false }
+
+- id: TC-GEN-18
+  name: NOS tie breaker qualifying marks
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Scoring/Merit
+  input: { qs_rank: 1000, qualifying_marks_percent: 85, competitor_marks: 80 }
+  expected: { selected: true }
+
+- id: TC-GEN-19
+  name: NOS tie breaker loss
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Scoring/Merit
+  input: { qs_rank: 1000, qualifying_marks_percent: 75, competitor_marks: 80 }
+  expected: { selected: false }
+
+- id: TC-GEN-20
+  name: NFST quarterly continuation certificate missing
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Lifecycle
+  input: { continuation_certificate_submitted: false }
+  expected: { payment_released: false }
+
+- id: TC-GEN-21
+  name: NFST quarterly continuation certificate submitted
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Lifecycle
+  input: { continuation_certificate_submitted: true }
+  expected: { payment_released: true }
+
+- id: TC-GEN-22
+  name: NFST joining report delay
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Lifecycle
+  input: { joining_report_days: 35 }
+  expected: { award_cancelled: true }
+
+- id: TC-GEN-23
+  name: NFST valid joining report
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Lifecycle
+  input: { joining_report_days: 20 }
+  expected: { award_cancelled: false }
+
+- id: TC-GEN-24
+  name: NOS return to India without completing
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Post-selection
+  input: { returned_early: true }
+  expected: { cancel_award: true }
+
+- id: TC-GEN-25
+  name: NFST thesis upload unlocks final payment
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Lifecycle
+  input: { thesis_uploaded: true }
+  expected: { final_payment_released: true }
+
+- id: TC-GEN-26
+  name: NFST thesis upload missing blocks final payment
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Lifecycle
+  input: { thesis_uploaded: false }
+  expected: { final_payment_released: false }
+
+- id: TC-GEN-27
+  name: NFST age 35 (pass)
+  scheme: NFST
+  source: nfst_part_a_full_guidelines_2021-26.pdf
+  clause: Eligibility
+  input: { age_years: 35, pg_marks_percent: 55, institution_category: "UGC 2(f)/12(B)" }
+  expected: { eligible: true }
+
+- id: TC-GEN-28
+  name: NOS age 32 for Master's
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Eligibility
+  input: { age_years: 32, course: "Master's", family_income: 500000, qualifying_marks_percent: 60, is_only_child_availing: true }
+  expected: { eligible: true }
+
+- id: TC-GEN-29
+  name: NOS age 33 for Master's (fail)
+  scheme: NOS
+  source: RevisedGuidelinesNOS07102022.pdf
+  clause: Eligibility
+  input: { age_years: 33, course: "Master's", family_income: 500000, qualifying_marks_percent: 60, is_only_child_availing: true }
+  expected: { eligible: false }
+
+- id: TC-GEN-30
+  name: NFST NET/CSIR score weightage 50%
+  scheme: NFST
+  source: Notice-RegardingSelectionofMeritList-2025-26.pdf
+  clause: Scoring/Merit
+  input: { net_scaled: 100, master_scaled: 80 }
+  expected: { total_score: 90 }
+
+- id: TC-GEN-31
+  name: NFST NET/CSIR score weightage 50% part 2
+  scheme: NFST
+  source: Notice-RegardingSelectionofMeritList-2025-26.pdf
+  clause: Scoring/Merit
+  input: { net_scaled: 80, master_scaled: 100 }
+  expected: { total_score: 90 }

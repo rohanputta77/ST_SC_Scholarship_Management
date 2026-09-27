@@ -1,0 +1,286 @@
+{
+  "scheme_id": "NFST",
+  "eligibility": [
+    {
+      "rule": { ">=": [{ "var": "pg_marks_percent" }, 55] },
+      "description": "Completion of PG/Master's with minimum 55% marks",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Eligibility",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "rule": { "in": [{ "var": "institution_category" }, ["UGC 2(f)/12(B)", "deemed university", "government-grant institution", "Institute of National Importance"]] },
+      "description": "Admission to M.Phil/M.Phil+Ph.D/Ph.D in an eligible institution category",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Eligibility",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "rule": { "<=": [{ "var": "age_years" }, 36] },
+      "description": "Maximum age 36 years as on 1 July of the award year",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Eligibility",
+      "effective_from": "2021-04-01",
+      "verified": true
+    }
+  ],
+  "documents": [
+    {
+      "type": "Passport photo",
+      "requirement": "mandatory",
+      "condition": null,
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Section 3.3",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "ST/PVTG certificate",
+      "requirement": "mandatory",
+      "condition": null,
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Section 3.3",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "10th/matriculation certificate (DOB proof)",
+      "requirement": "mandatory",
+      "condition": null,
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Section 3.3",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "Divyangjan certificate",
+      "requirement": "conditional",
+      "condition": "if applicable",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Section 3.3",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "PG marksheet with CGPA-to-percentage conversion formula",
+      "requirement": "conditional",
+      "condition": "if applicable",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Section 3.3",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "Admission/joining certificate",
+      "requirement": "mandatory",
+      "condition": null,
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Section 3.3",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "Offer letter",
+      "requirement": "conditional",
+      "condition": "for IIT/AIIMS/IIM/IISER admits",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Section 3.3",
+      "effective_from": null,
+      "verified": true
+    }
+  ],
+  "slots": {
+    "total": {
+      "value": 750,
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Slot/Quota Rules",
+      "effective_from": null,
+      "verified": true
+    },
+    "buckets": [
+      {
+        "id": "Divyangjan",
+        "count": 38,
+        "priority": 1,
+        "cascade_to": "PVTG",
+        "overlapping_with": [],
+        "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+        "clause": "Slot/Quota Rules",
+        "effective_from": null,
+        "verified": true
+      },
+      {
+        "id": "PVTG",
+        "count": 25,
+        "priority": 2,
+        "cascade_to": "Female",
+        "overlapping_with": [],
+        "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+        "clause": "Slot/Quota Rules",
+        "effective_from": null,
+        "verified": true
+      },
+      {
+        "id": "Female",
+        "count": 225,
+        "priority": 3,
+        "cascade_to": "ST Others",
+        "overlapping_with": ["Divyangjan", "PVTG"],
+        "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+        "clause": "Slot/Quota Rules",
+        "effective_from": null,
+        "verified": true
+      },
+      {
+        "id": "ST Others",
+        "count": 462,
+        "priority": 4,
+        "cascade_to": null,
+        "overlapping_with": [],
+        "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+        "clause": "Slot/Quota Rules",
+        "effective_from": null,
+        "verified": true
+      }
+    ]
+  },
+  "scoring": [
+    {
+      "component": "UGC-NET/CSIR-NET score",
+      "weight": 50,
+      "scaling_method": "linear",
+      "source": "Notice-RegardingSelectionofMeritList-2025-26.pdf",
+      "clause": "Scoring/Merit",
+      "effective_from": "2025-04-01",
+      "verified": false
+    },
+    {
+      "component": "Master's/4-year-Bachelor's-with-Research marks",
+      "weight": 50,
+      "scaling_method": "percentage",
+      "source": "Notice-RegardingSelectionofMeritList-2025-26.pdf",
+      "clause": "Scoring/Merit",
+      "effective_from": "2025-04-01",
+      "verified": true
+    }
+  ],
+  "lifecycle": [
+    "draft",
+    "submitted",
+    "ai_checked",
+    "defective",
+    "institute_verification",
+    "ministry_verification",
+    "provisional_merit",
+    "provisional_award",
+    "joined",
+    "active",
+    "upgraded_mphil_to_phd",
+    "closed",
+    "cancelled"
+  ],
+  "rates": [
+    {
+      "component": "M.Phil Stipend",
+      "amount": 31000,
+      "period": "monthly",
+      "condition": "both streams",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "Ph.D Stipend (Years 1-2)",
+      "amount": 31000,
+      "period": "monthly",
+      "condition": null,
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "Ph.D Stipend (Years 3-5)",
+      "amount": 35000,
+      "period": "monthly",
+      "condition": null,
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "Contingency M.Phil (Humanities)",
+      "amount": 10000,
+      "period": "yearly",
+      "condition": "Humanities",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "Contingency M.Phil (Science/Engineering)",
+      "amount": 12000,
+      "period": "yearly",
+      "condition": "Science/Engineering",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "Contingency Ph.D (Humanities)",
+      "amount": 20500,
+      "period": "yearly",
+      "condition": "Humanities",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "Contingency Ph.D (Science/Engineering)",
+      "amount": 25000,
+      "period": "yearly",
+      "condition": "Science/Engineering",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "HRA",
+      "amount": "8%/16%/24%",
+      "period": "monthly",
+      "condition": "per UGC city categories",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "Escort allowance",
+      "amount": 2000,
+      "period": "monthly",
+      "condition": "for Divyangjan",
+      "source": "nfst_part_a_full_guidelines_2021-26.pdf",
+      "clause": "Rates",
+      "effective_from": "2022-04-01",
+      "verified": true
+    },
+    {
+      "component": "Revised Stipend Rate Placeholder",
+      "amount": null,
+      "period": "monthly",
+      "condition": "pending 2023 revision document",
+      "source": "Pending",
+      "clause": "Rates",
+      "effective_from": null,
+      "verified": false
+    }
+  ]
+}

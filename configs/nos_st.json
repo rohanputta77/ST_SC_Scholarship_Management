@@ -1,0 +1,197 @@
+{
+  "scheme_id": "NOS",
+  "eligibility": [
+    {
+      "rule": { "<=": [{ "var": "age_years" }, 35] },
+      "description": "Maximum age limit applies (e.g. 35 for Ph.D)",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Eligibility",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "rule": { "<=": [{ "var": "family_income" }, 600000] },
+      "description": "Family income under Rs. 6 lakh",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Eligibility",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "rule": { ">=": [{ "var": "qualifying_marks_percent" }, 55] },
+      "description": "55% minimum marks",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Eligibility",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "rule": { "==": [{ "var": "is_only_child_availing" }, true] },
+      "description": "Restricted to one child per family",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Eligibility",
+      "effective_from": "2021-04-01",
+      "verified": true
+    }
+  ],
+  "documents": [
+    {
+      "type": "Income certificate",
+      "requirement": "mandatory",
+      "condition": null,
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Documents",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "ST certificate",
+      "requirement": "mandatory",
+      "condition": null,
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Documents",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "Offer of admission",
+      "requirement": "mandatory",
+      "condition": null,
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Documents",
+      "effective_from": null,
+      "verified": true
+    },
+    {
+      "type": "Conversion factor formula",
+      "requirement": "conditional",
+      "condition": "if grades are not in percentage",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Documents",
+      "effective_from": null,
+      "verified": true
+    }
+  ],
+  "slots": {
+    "total": {
+      "value": 20,
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Slot/Quota Rules",
+      "effective_from": null,
+      "verified": true
+    },
+    "buckets": [
+      {
+        "id": "Female",
+        "count": 6,
+        "priority": 1,
+        "cascade_to": "ST Others",
+        "overlapping_with": ["PVTG"],
+        "source": "RevisedGuidelinesNOS07102022.pdf",
+        "clause": "Slot/Quota Rules",
+        "effective_from": null,
+        "verified": true
+      },
+      {
+        "id": "PVTG",
+        "count": 3,
+        "priority": 2,
+        "cascade_to": "ST Others",
+        "overlapping_with": ["Female"],
+        "source": "RevisedGuidelinesNOS07102022.pdf",
+        "clause": "Slot/Quota Rules",
+        "effective_from": null,
+        "verified": true
+      },
+      {
+        "id": "ST Others",
+        "count": 17,
+        "priority": 3,
+        "cascade_to": null,
+        "overlapping_with": [],
+        "source": "RevisedGuidelinesNOS07102022.pdf",
+        "clause": "Slot/Quota Rules",
+        "effective_from": null,
+        "verified": true
+      }
+    ]
+  },
+  "scoring": [
+    {
+      "component": "QS top-1000 offer holders",
+      "weight": 100,
+      "scaling_method": "boolean_to_max",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Scoring/Merit",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "component": "Qualifying exam marks",
+      "weight": 1,
+      "scaling_method": "tie_breaker",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Scoring/Merit",
+      "effective_from": "2021-04-01",
+      "verified": true
+    }
+  ],
+  "lifecycle": [
+    "draft",
+    "submitted",
+    "ai_checked",
+    "defective",
+    "institute_verification",
+    "ministry_verification",
+    "interview_or_offer_review",
+    "provisional_award",
+    "confirmation_pending",
+    "confirmed",
+    "joined_abroad",
+    "active",
+    "closed",
+    "cancelled"
+  ],
+  "rates": [
+    {
+      "component": "Maintenance Allowance (US)",
+      "amount": 15400,
+      "period": "yearly",
+      "condition": "in US",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Rates",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "component": "Maintenance Allowance (UK)",
+      "amount": 9900,
+      "period": "yearly",
+      "condition": "in UK",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Rates",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "component": "Contingency (US)",
+      "amount": 1532,
+      "period": "yearly",
+      "condition": "in US",
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Rates",
+      "effective_from": "2021-04-01",
+      "verified": true
+    },
+    {
+      "component": "Tuition fees",
+      "amount": "actuals",
+      "period": "yearly",
+      "condition": null,
+      "source": "RevisedGuidelinesNOS07102022.pdf",
+      "clause": "Rates",
+      "effective_from": "2021-04-01",
+      "verified": true
+    }
+  ]
+}

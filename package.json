@@ -1,0 +1,26 @@
+{
+  "name": "stsc-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel -r run dev",
+    "build": "pnpm -r run build",
+    "lint": "pnpm -r run lint"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.6.0",
+    "@nestjs/common": "^12.1.0",
+    "@nestjs/core": "^12.1.0",
+    "@types/jest": "^30.0.0",
+    "express": "^5.2.1",
+    "fast-check": "^4.10.2",
+    "json-logic-js": "^2.0.5",
+    "pdf-lib": "^1.17.1",
+    "ts-jest": "^29.4.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2",
+    "xstate": "^5.33.2"
+  }
+}

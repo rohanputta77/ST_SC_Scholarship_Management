@@ -1,0 +1,111 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "scheme_id": { "type": "string" },
+    "eligibility": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": { "type": "object" },
+          "description": { "type": "string" },
+          "source": { "type": "string" },
+          "clause": { "type": "string" },
+          "effective_from": { "type": ["string", "null"] },
+          "verified": { "type": "boolean" }
+        },
+        "required": ["rule", "description", "source", "clause", "effective_from", "verified"]
+      }
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "requirement": { "enum": ["mandatory", "optional", "conditional"] },
+          "condition": { "type": ["string", "null"] },
+          "source": { "type": "string" },
+          "clause": { "type": "string" },
+          "effective_from": { "type": ["string", "null"] },
+          "verified": { "type": "boolean" }
+        },
+        "required": ["type", "requirement", "condition", "source", "clause", "effective_from", "verified"]
+      }
+    },
+    "slots": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" },
+            "source": { "type": "string" },
+            "clause": { "type": "string" },
+            "effective_from": { "type": ["string", "null"] },
+            "verified": { "type": "boolean" }
+          },
+          "required": ["value", "source", "clause", "effective_from", "verified"]
+        },
+        "buckets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "count": { "type": "number" },
+              "priority": { "type": "number" },
+              "cascade_to": { "type": ["string", "null"] },
+              "overlapping_with": { "type": "array", "items": { "type": "string" } },
+              "source": { "type": "string" },
+              "clause": { "type": "string" },
+              "effective_from": { "type": ["string", "null"] },
+              "verified": { "type": "boolean" }
+            },
+            "required": ["id", "count", "priority", "cascade_to", "overlapping_with", "source", "clause", "effective_from", "verified"]
+          }
+        }
+      },
+      "required": ["total", "buckets"]
+    },
+    "scoring": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "component": { "type": "string" },
+          "weight": { "type": "number" },
+          "scaling_method": { "type": ["string", "null"] },
+          "source": { "type": "string" },
+          "clause": { "type": "string" },
+          "effective_from": { "type": ["string", "null"] },
+          "verified": { "type": "boolean" }
+        },
+        "required": ["component", "weight", "scaling_method", "source", "clause", "effective_from", "verified"]
+      }
+    },
+    "lifecycle": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "rates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "component": { "type": "string" },
+          "amount": { "type": ["number", "string", "null"] },
+          "period": { "type": ["string", "null"] },
+          "condition": { "type": ["string", "null"] },
+          "source": { "type": "string" },
+          "clause": { "type": "string" },
+          "effective_from": { "type": ["string", "null"] },
+          "verified": { "type": "boolean" }
+        },
+        "required": ["component", "amount", "period", "condition", "source", "clause", "effective_from", "verified"]
+      }
+    }
+  },
+  "required": ["scheme_id", "eligibility", "documents", "slots", "scoring", "lifecycle", "rates"]
+}
