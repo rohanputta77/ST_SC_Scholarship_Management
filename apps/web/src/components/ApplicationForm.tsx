@@ -10,7 +10,7 @@ export default function ApplicationForm() {
 
   // IndexedDB Resumable Draft
   useEffect(() => {
-    get('appDraft').then((val) => val && setFormData(val));
+    get('appDraft').then((val: any) => val && setFormData(val));
   }, []);
 
   const handleBlur = () => set('appDraft', formData);
@@ -22,8 +22,9 @@ export default function ApplicationForm() {
   };
 
   // Camera + Client Compression
-  const handleCameraCapture = async (e) => {
-    const file = e.target.files[0];
+  const handleCameraCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
     const compressedFile = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920 });
     // Upload compressed file logic...
   };
@@ -68,7 +69,25 @@ export default function ApplicationForm() {
 
         {/* Documents Card */}
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-xl space-y-4">
-          <h2 className="text-xl font-semibold">{t('form.documents')}</h2>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-xl font-semibold">{t('form.documents') || 'Required Documents'}</h2>
+            <span className="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded">NFST Scheme</span>
+          </div>
+          
+          <div className="bg-black/20 p-4 rounded-xl text-sm mb-4 space-y-2 border border-white/5">
+            <p className="text-gray-300 font-semibold mb-2">Please ensure you have the following ready:</p>
+            <ul className="list-disc list-inside text-gray-400 space-y-1">
+              <li>ST Certificate (Digitally signed or issued by Tehsildar)</li>
+              <li>Income Certificate</li>
+              <li>Master's Degree Marks Sheet (Minimum 55%)</li>
+              <li>NET/CSIR-NET Score Card</li>
+              <li>Aadhaar Card / Identity Proof</li>
+            </ul>
+            <p className="text-xs text-blue-300 mt-2 flex items-center">
+              <svg className="w-4 h-4 mr-1 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              Pro Tip: Use DigiLocker to auto-clear verification instantly.
+            </p>
+          </div>
           
           <div className="grid grid-cols-2 gap-4">
             <button 

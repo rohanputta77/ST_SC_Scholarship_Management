@@ -20,7 +20,31 @@
     <div id="root"></div>
     <script type="text/babel">
         function App() {
-            const [activeTab, setActiveTab] = React.useState('scrutiny');
+            const [activeTab, setActiveTab] = React.useState('applicant');
+            const [draftSaved, setDraftSaved] = React.useState(false);
+            const [formData, setFormData] = React.useState({ fullName: '', dob: '', aadhaarMasked: '', course: '', university: '' });
+            const [digiDocs, setDigiDocs] = React.useState([]);
+            const [submitting, setSubmitting] = React.useState(false);
+            const [submitted, setSubmitted] = React.useState(false);
+
+            const handleFormChange = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+                setDraftSaved(false);
+                setTimeout(() => setDraftSaved(true), 800);
+            };
+
+            const fetchDigiLocker = () => {
+                setDigiDocs([
+                    { name: 'ST_Certificate.pdf', status: 'verified', icon: 'file-check' },
+                    { name: 'Income_Certificate.pdf', status: 'verified', icon: 'file-check' },
+                    { name: 'Marksheet_MSc.pdf', status: 'verified', icon: 'file-check' },
+                ]);
+            };
+
+            const handleSubmit = () => {
+                setSubmitting(true);
+                setTimeout(() => { setSubmitting(false); setSubmitted(true); }, 2000);
+            };
 
             React.useEffect(() => {
                 lucide.createIcons();
@@ -139,6 +163,138 @@
                 </div>
             );
 
+            const renderApplicant = () => {
+                if (submitted) {
+                    return (
+                        <div className="flex items-center justify-center h-[calc(100vh-80px)]">
+                            <div className="glass p-12 rounded-3xl text-center max-w-lg shadow-2xl">
+                                <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <i data-lucide="check-circle" className="w-10 h-10 text-emerald-400"></i>
+                                </div>
+                                <h2 className="text-2xl font-bold mb-2">Application Submitted!</h2>
+                                <p className="text-slate-400 mb-4">Your NFST application has been submitted. The AI engine will now verify your documents automatically.</p>
+                                <div className="bg-blue-500/10 border border-blue-500/30 p-4 rounded-xl text-sm">
+                                    <div className="flex justify-between mb-1"><span className="text-slate-400">Application ID:</span><span className="font-mono font-bold text-blue-400">APP-NFST-00127</span></div>
+                                    <div className="flex justify-between"><span className="text-slate-400">Status:</span><span className="font-semibold text-amber-400">AI Verification In Progress</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                }
+
+                return (
+                    <div className="h-[calc(100vh-80px)] overflow-y-auto p-8">
+                        <div className="max-w-3xl mx-auto space-y-6">
+
+                            {/* Header */}
+                            <div className="text-center mb-8">
+                                <h1 className="text-3xl font-bold mb-2">NFST Fellowship Application</h1>
+                                <p className="text-slate-400">National Fellowship for Scheduled Tribe Students (2025-26)</p>
+                                {draftSaved && <span className="inline-block mt-2 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full">✓ Draft auto-saved</span>}
+                            </div>
+
+                            {/* Step 1: Required Documents Guidance */}
+                            <div className="glass p-6 rounded-2xl">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-lg font-bold flex items-center gap-2"><i data-lucide="info" className="w-5 h-5 text-blue-400"></i> Required Documents Checklist</h2>
+                                    <span className="text-xs bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full">NFST Scheme</span>
+                                </div>
+                                <div className="bg-black/30 p-5 rounded-xl border border-white/5 space-y-2 text-sm">
+                                    <p className="text-slate-300 font-semibold mb-3">Please ensure you have the following documents ready before applying:</p>
+                                    <ul className="space-y-2 text-slate-400">
+                                        <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">①</span> <span><strong className="text-white">ST Certificate</strong> — Digitally signed or issued by Tehsildar / SDM</span></li>
+                                        <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">②</span> <span><strong className="text-white">Income Certificate</strong> — Family income proof (latest financial year)</span></li>
+                                        <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">③</span> <span><strong className="text-white">Master's Degree Marksheet</strong> — Minimum 55% aggregate required</span></li>
+                                        <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">④</span> <span><strong className="text-white">NET / CSIR-NET Score Card</strong> — For merit calculation (50% weightage)</span></li>
+                                        <li className="flex items-start gap-2"><span className="text-blue-400 mt-0.5">⑤</span> <span><strong className="text-white">Aadhaar Card</strong> — For identity verification (stored as masked token only)</span></li>
+                                    </ul>
+                                    <div className="mt-4 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-300 flex items-center gap-2">
+                                        <i data-lucide="zap" className="w-4 h-4"></i>
+                                        <span><strong>Pro Tip:</strong> Use DigiLocker to auto-fetch verified documents and skip manual upload entirely.</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Step 2: Personal Details */}
+                            <div className="glass p-6 rounded-2xl">
+                                <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="user" className="w-5 h-5 text-purple-400"></i> Personal Details</h2>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="text-sm text-slate-400 block mb-1">Full Name (as per Aadhaar)</label>
+                                        <input type="text" value={formData.fullName} onChange={(e) => handleFormChange('fullName', e.target.value)} placeholder="Enter your full name" className="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white placeholder-slate-600 outline-none focus:border-blue-500 transition-colors" />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm text-slate-400 block mb-1">Date of Birth</label>
+                                        <input type="date" value={formData.dob} onChange={(e) => handleFormChange('dob', e.target.value)} className="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white outline-none focus:border-blue-500 transition-colors" />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm text-slate-400 block mb-1">Course Enrolled</label>
+                                        <select value={formData.course} onChange={(e) => handleFormChange('course', e.target.value)} className="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white outline-none focus:border-blue-500 transition-colors">
+                                            <option value="">Select course</option>
+                                            <option value="mphil">M.Phil</option>
+                                            <option value="phd">Ph.D</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="text-sm text-slate-400 block mb-1">University / Institution</label>
+                                        <input type="text" value={formData.university} onChange={(e) => handleFormChange('university', e.target.value)} placeholder="e.g. JNU, Delhi" className="w-full bg-black/30 border border-white/10 rounded-lg p-3 text-white placeholder-slate-600 outline-none focus:border-blue-500 transition-colors" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Step 3: Document Upload */}
+                            <div className="glass p-6 rounded-2xl">
+                                <h2 className="text-lg font-bold mb-4 flex items-center gap-2"><i data-lucide="upload" className="w-5 h-5 text-amber-400"></i> Upload Documents</h2>
+                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                    <button onClick={fetchDigiLocker} className="bg-blue-600 hover:bg-blue-500 p-4 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2">
+                                        <i data-lucide="cloud-download" className="w-5 h-5"></i> Fetch from DigiLocker
+                                    </button>
+                                    <label className="bg-purple-600 hover:bg-purple-500 p-4 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                                        <i data-lucide="camera" className="w-5 h-5"></i> Camera Capture
+                                        <input type="file" accept="image/*" capture="environment" className="hidden" />
+                                    </label>
+                                </div>
+
+                                {/* Fetched Docs */}
+                                {digiDocs.length > 0 && (
+                                    <div className="space-y-2 mt-4">
+                                        <p className="text-sm text-emerald-400 font-semibold mb-2">✓ Documents fetched from DigiLocker:</p>
+                                        {digiDocs.map((doc, i) => (
+                                            <div key={i} className="flex items-center justify-between bg-emerald-500/10 border border-emerald-500/20 p-3 rounded-lg">
+                                                <div className="flex items-center gap-2">
+                                                    <i data-lucide={doc.icon} className="w-4 h-4 text-emerald-400"></i>
+                                                    <span className="text-sm font-semibold">{doc.name}</span>
+                                                </div>
+                                                <span className="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full uppercase font-bold">{doc.status}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Submit */}
+                            <button onClick={handleSubmit} disabled={submitting} className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 p-4 rounded-xl font-bold text-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2">
+                                {submitting ? (
+                                    <><svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg> Submitting...</>
+                                ) : (
+                                    <><i data-lucide="send" className="w-5 h-5"></i> Submit Application</>
+                                )}
+                            </button>
+
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderTab = () => {
+                switch(activeTab) {
+                    case 'applicant': return renderApplicant();
+                    case 'scrutiny': return renderScrutiny();
+                    case 'whatif': return renderWhatIf();
+                    default: return renderApplicant();
+                }
+            };
+
             return (
                 <div className="flex flex-col h-screen">
                     <nav className="h-20 border-b border-white/10 flex px-8 items-center justify-between bg-slate-900/80 backdrop-blur-md">
@@ -147,12 +303,13 @@
                             STSC Prototype View
                         </div>
                         <div className="flex h-full">
+                            <button onClick={() => setActiveTab('applicant')} className={`tab-btn ${activeTab === 'applicant' ? 'active' : ''}`}>Applicant Portal</button>
                             <button onClick={() => setActiveTab('scrutiny')} className={`tab-btn ${activeTab === 'scrutiny' ? 'active' : ''}`}>Scrutiny Workbench</button>
                             <button onClick={() => setActiveTab('whatif')} className={`tab-btn ${activeTab === 'whatif' ? 'active' : ''}`}>What-If Simulator</button>
                         </div>
                     </nav>
                     <main className="flex-1 relative">
-                        {activeTab === 'scrutiny' ? renderScrutiny() : renderWhatIf()}
+                        {renderTab()}
                     </main>
                 </div>
             );

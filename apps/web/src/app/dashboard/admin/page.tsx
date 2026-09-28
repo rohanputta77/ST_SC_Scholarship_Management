@@ -27,7 +27,16 @@ type TabId = (typeof TABS)[number]["id"];
 export default function Home() {
   const [active, setActive] = useState<TabId>("dashboard");
   const [toast, setToast] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(null), 3500); };
+
+  const handleLogout = () => {
+    document.cookie = "user_role=; path=/; max-age=0";
+    window.location.href = "/";
+  };
 
   const renderView = () => {
     switch (active) {
@@ -95,22 +104,55 @@ export default function Home() {
           </div>
 
           {/* Right */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3 relative">
             <div className="relative">
               <Search size={13} className="absolute left-2 top-[7px]" style={{ color: "var(--text-muted)" }} />
               <input
                 type="text"
                 placeholder="Search…"
-                className="pl-7 pr-3 py-1 rounded-md text-[11px] outline-none border w-36 transition-colors focus:border-[var(--accent-primary)]"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setIsSearching(true)}
+                onBlur={() => setTimeout(() => setIsSearching(false), 200)}
+                className="pl-7 pr-3 py-1 rounded-md text-[11px] outline-none border w-40 transition-all focus:w-64 focus:border-[var(--accent-primary)]"
                 style={{ background: "var(--bg-card-alt)", borderColor: "var(--border-card)", color: "var(--text-primary)" }}
               />
+              {isSearching && searchQuery.length > 0 && (
+                <div className="absolute top-full left-0 mt-1 w-full rounded-md shadow-lg border p-1.5 z-50 flex flex-col gap-1" style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
+                    <div className="px-2 py-1.5 hover:bg-white/5 cursor-pointer rounded text-[11px] font-medium transition-colors" onClick={() => showToast(`Searching applicants for '${searchQuery}'`)}>
+                        <span style={{ color: "var(--accent-teal)" }}>Applicant:</span> {searchQuery}
+                    </div>
+                    <div className="px-2 py-1.5 hover:bg-white/5 cursor-pointer rounded text-[11px] font-medium transition-colors" onClick={() => showToast(`Searching schemes for '${searchQuery}'`)}>
+                        <span style={{ color: "var(--accent-primary)" }}>Scheme:</span> Search in configurations
+                    </div>
+                </div>
+              )}
             </div>
-            <button className="relative p-1 rounded-md" style={{ color: "var(--text-muted)" }}>
+            <button className="relative p-1 rounded-md hover:bg-white/5 transition-colors" style={{ color: "var(--text-muted)" }} onClick={() => showToast("No new notifications")}>
               <Bell size={15} />
               <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full" style={{ background: "var(--accent-rose)" }} />
             </button>
-            <div className="w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold" style={{ background: "var(--accent-primary-bg)", color: "var(--accent-primary)", border: "1px solid rgba(201,169,110,0.2)" }}>
-              MO
+            <div className="relative">
+                <button 
+                  onClick={() => setShowProfileMenu(!showProfileMenu)}
+                  onBlur={() => setTimeout(() => setShowProfileMenu(false), 200)}
+                  className="w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity" 
+                  style={{ background: "var(--accent-primary-bg)", color: "var(--accent-primary)", border: "1px solid rgba(201,169,110,0.2)" }}
+                >
+                  MO
+                </button>
+                
+                {showProfileMenu && (
+                    <div className="absolute top-full right-0 mt-1 w-28 rounded-md shadow-2xl border p-1 z-50" style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
+                        <button 
+                          onClick={handleLogout}
+                          className="w-full text-left px-3 py-2 hover:bg-white/5 cursor-pointer rounded text-[11px] font-bold transition-colors"
+                          style={{ color: "var(--accent-rose)" }}
+                        >
+                          Logout
+                        </button>
+                    </div>
+                )}
             </div>
           </div>
         </header>

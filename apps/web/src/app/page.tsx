@@ -4,8 +4,8 @@ import { Shield, BookOpen, Building2, User, UserCheck } from 'lucide-react';
 
 const FRAME_COUNT = 221;
 
-const AshokaChakra = ({ className = "" }: { className?: string }) => (
-  <svg viewBox="0 0 100 100" className={className} fill="none" stroke="currentColor">
+const AshokaChakra = ({ className = "", style }: { className?: string, style?: React.CSSProperties }) => (
+  <svg viewBox="0 0 100 100" className={className} style={style} fill="none" stroke="currentColor">
     {/* Outer border */}
     <circle cx="50" cy="50" r="46" strokeWidth="4" />
     {/* Inner ring */}

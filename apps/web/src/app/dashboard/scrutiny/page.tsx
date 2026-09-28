@@ -11,7 +11,7 @@ export default function ScrutinyDashboard() {
         <h1 className="text-sm font-bold flex items-center gap-2 text-[var(--accent-rose)]"><BookOpen size={16}/> Scrutiny Officer Portal</h1>
         <button onClick={logout} className="text-xs font-bold text-[var(--text-muted)] hover:text-[var(--accent-rose)] transition-colors">Sign Out</button>
       </header>
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-hidden">
         <ScrutinyWorkbench />
       </main>
     </div>
