@@ -35,30 +35,9 @@ export default function PublicLanding() {
   const [loadedCount, setLoadedCount] = useState(0);
   const imagesRef = useRef<HTMLImageElement[]>([]);
 
-  // Preload images
+  // Skip image sequence — load immediately
   useEffect(() => {
-    let count = 0;
-    const images: HTMLImageElement[] = [];
-    
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      const frameNum = i.toString().padStart(3, '0');
-      img.src = `/hero-sequence/ezgif-frame-${frameNum}.png`;
-      img.onload = () => {
-        count++;
-        setLoadedCount(count);
-        if (count === FRAME_COUNT) {
-          setLoaded(true);
-        }
-      };
-      img.onerror = () => {
-        count++;
-        setLoadedCount(count);
-        if (count === FRAME_COUNT) setLoaded(true);
-      }
-      images.push(img);
-    }
-    imagesRef.current = images;
+    setLoaded(true);
   }, []);
 
   // Scroll Scrubbing Logic with Lerp & Optimization
