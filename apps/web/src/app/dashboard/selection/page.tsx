@@ -2,6 +2,7 @@
 import React from 'react';
 import SelectionCommittee from '../../../views/SelectionCommittee';
 import { UserCheck } from 'lucide-react';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
 
 export default function SelectionDashboard() {
   const logout = () => { document.cookie = 'user_role=; path=/; max-age=0'; window.location.href = '/'; };
