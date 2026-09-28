@@ -1,124 +1,39 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, BookOpen, Building2, User, UserCheck } from 'lucide-react';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
 
-const FRAME_COUNT = 221;
 
+const AshokaChakra = ({ className = "", style }: { className?: string; style?: React.CSSProperties }) => (
+  <svg viewBox="0 0 100 100" className={className} style={style} fill="none" stroke="currentColor">
+    <circle cx="50" cy="50" r="46" strokeWidth="2.5" />
+    <circle cx="50" cy="50" r="38" strokeWidth="0.5" strokeDasharray="1 3" opacity="0.6" />
+    <circle cx="50" cy="50" r="6" fill="currentColor" />
+    {Array.from({ length: 24 }).map((_, i) => (
+      <line key={i} x1="50" y1="50" x2="50" y2="6" strokeWidth="1.2" strokeLinecap="round" transform={`rotate(${i * 15} 50 50)`} />
+    ))}
+    {Array.from({ length: 24 }).map((_, i) => {
+      const angle = (i * 15 * Math.PI) / 180;
+      const cx = 50 + 38 * Math.sin(angle);
+      const cy = 50 - 38 * Math.cos(angle);
+      return <circle key={`dot-${i}`} cx={cx} cy={cy} r="1.5" fill="currentColor" opacity="0.8" />;
+    })}
+  </svg>
+);
+
+const ROLES = [
+  { role: 'applicant',             label: 'Applicant',             icon: User,      accent: '#0052A3' /* Chakra Blue */ },
+  { role: 'ministry_admin',        label: 'Ministry Admin',        icon: Shield,    accent: '#FF9933' /* Saffron */ },
+  { role: 'institute_nodal_officer',label: 'Institute Nodal',       icon: Building2, accent: '#138808' /* Green */ },
+  { role: 'scrutiny_officer',      label: 'Scrutiny Officer',      icon: BookOpen,  accent: '#A855F7' /* Purple */ },
+  { role: 'selection_committee',   label: 'Selection Committee',   icon: UserCheck, accent: '#EAB308' /* Gold */ },
+];
 
 export default function PublicLanding() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Show UI immediately, don't wait for images!
-  const [uiVisible, setUiVisible] = useState(false);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const [firstFrameLoaded, setFirstFrameLoaded] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Show UI instantly
-    const t = setTimeout(() => setUiVisible(true), 0);
-
-
-    // Preload images silently in background without blocking the UI
-    const images: HTMLImageElement[] = [];
-    
-    // Load frame 1 first so it shows up immediately
-    const firstImg = new Image();
-    firstImg.src = `/hero-sequence/ezgif-frame-001.png`;
-    firstImg.onload = () => setFirstFrameLoaded(true);
-    images[0] = firstImg;
-
-    // Then lazily load the rest
-    for (let i = 2; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      const frameNum = i.toString().padStart(3, '0');
-      img.src = `/hero-sequence/ezgif-frame-${frameNum}.png`;
-      images[i - 1] = img;
-    }
-    
-    imagesRef.current = images;
-    
-    return () => clearTimeout(t);
-  }, []);
-
-  // Scroll Scrubbing Logic with Lerp & Optimization
-  useEffect(() => {
-    if (!uiVisible || !canvasRef.current || !containerRef.current || imagesRef.current.length === 0) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d', { alpha: false }); 
-    if (!ctx) return;
-
-    let targetFrame = 0;
-    let currentFrame = 0;
-    let lastDrawnFrame = -1; 
-    let animationFrameId: number;
-
-    const drawFrame = (index: number) => {
-      // Ensure index is within bounds
-      index = Math.max(0, Math.min(index, FRAME_COUNT - 1));
-      
-      if (index === lastDrawnFrame) return; 
-
-      const img = imagesRef.current[index];
-      // Only draw if the image has actually finished downloading
-      if (img && img.complete && img.naturalWidth > 0) {
-        lastDrawnFrame = index;
-        
-        const canvasRatio = canvas.width / canvas.height;
-        const imgRatio = img.width / img.height;
-        let drawWidth = canvas.width;
-        let drawHeight = canvas.height;
-        let offsetX = 0;
-        let offsetY = 0;
-
-        if (imgRatio > canvasRatio) {
-          drawWidth = canvas.height * imgRatio;
-          offsetX = (canvas.width - drawWidth) / 2;
-        } else {
-          drawHeight = canvas.width / imgRatio;
-          offsetY = (canvas.height - drawHeight) / 2;
-        }
-
-        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-      }
-    };
-
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const maxScroll = document.body.scrollHeight - window.innerHeight;
-      const scrollFraction = Math.max(0, Math.min(1, scrollTop / maxScroll));
-      
-      targetFrame = scrollFraction * (FRAME_COUNT - 1);
-    };
-
-    const renderLoop = () => {
-      currentFrame += (targetFrame - currentFrame) * 0.12;
-      drawFrame(Math.round(currentFrame));
-      animationFrameId = requestAnimationFrame(renderLoop);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    animationFrameId = requestAnimationFrame(renderLoop);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [uiVisible, firstFrameLoaded]); // Re-run when first frame loads so it renders instantly
-
-  // Handle Resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (canvasRef.current) {
-        canvasRef.current.width = window.innerWidth;
-        canvasRef.current.height = window.innerHeight;
-        window.dispatchEvent(new Event('scroll'));
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    handleResize(); 
-    return () => window.removeEventListener('resize', handleResize);
+    setMounted(true);
   }, []);
 
   const loginAs = (role: string) => {
@@ -127,66 +42,157 @@ export default function PublicLanding() {
   };
 
   return (
-    <div ref={containerRef} className="relative bg-black text-[var(--text-primary)]" style={{ height: '250vh' }}>
+    <div className="relative min-h-screen overflow-hidden font-sans flex items-center justify-center transition-colors duration-500" style={{ background: "var(--bg-main)", color: "var(--text-primary)" }}>
       
-      {/* Sticky Canvas */}
-      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden bg-black" style={{ willChange: 'transform' }}>
-        <canvas 
-          ref={canvasRef} 
-          className="absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-1000"
-          style={{ opacity: firstFrameLoaded ? 1 : 0 }}
-        />
-
-        {/* Scroll Instruction */}
-        {uiVisible && (
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce z-10" style={{ opacity: "calc(1 - (scrollY / 300))" }}>
-            <span className="text-[10px] uppercase tracking-[0.3em] font-bold mb-2 drop-shadow-md text-white/80">Scroll Down</span>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-white/80 to-transparent drop-shadow-md" />
-          </div>
-        )}
+      {/* Theme Switcher in top right */}
+      <div className="absolute top-6 right-6 z-50">
+        <ThemeSwitcher />
       </div>
 
-      {/* Content Container */}
-      <div className="absolute bottom-0 left-0 w-full min-h-screen flex items-center justify-center p-6 z-20 pointer-events-none">
-        {/* Pointer events none on wrapper so scroll works everywhere, but auto on inner card */}
-        <div className={`pointer-events-auto w-full max-w-4xl bg-black/50 backdrop-blur-3xl rounded-[2rem] p-10 border border-white/5 shadow-2xl transition-all duration-1000 ${uiVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+      {/* ── AMBIENT INDIAN FLAG AURORA BACKGROUND ── */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none mix-blend-screen" style={{ opacity: "var(--aurora-opacity)" }}>
+        {/* Saffron Glow */}
+        <div className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] max-w-[800px] max-h-[800px] rounded-full blur-[120px] animate-blob"
+             style={{ background: 'radial-gradient(circle, rgba(255,153,51,0.25) 0%, transparent 70%)', animationDelay: '0s' }} />
+        {/* Green Glow */}
+        <div className="absolute -bottom-[20%] -right-[10%] w-[70vw] h-[70vw] max-w-[800px] max-h-[800px] rounded-full blur-[120px] animate-blob"
+             style={{ background: 'radial-gradient(circle, rgba(19,136,8,0.25) 0%, transparent 70%)', animationDelay: '4s' }} />
+        {/* Chakra Blue Core */}
+        <div className="absolute top-[20%] left-[20%] w-[60vw] h-[60vw] max-w-[600px] max-h-[600px] rounded-full blur-[100px] animate-blob"
+             style={{ background: 'radial-gradient(circle, rgba(0,82,163,0.15) 0%, transparent 70%)', animationDelay: '2s' }} />
+      </div>
+
+      {/* ── GIANT BACKGROUND CHAKRA ── */}
+      <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none overflow-hidden">
+        <AshokaChakra 
+          className="w-[150vh] h-[150vh] opacity-[0.03] text-white animate-spin-slow" 
+          style={{ animationDuration: '120s' }} 
+        />
+      </div>
+
+      {/* ── NOISE TEXTURE OVERLAY ── */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
+           style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}>
+      </div>
+
+      {/* ── MAIN CONTENT ── */}
+      <div className={`relative z-10 w-full max-w-6xl mx-auto px-6 py-12 transition-all duration-1000 ease-out ${mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'}`}>
+        
+        {/* Header Section */}
+        <div className="text-center mb-16 relative">
           
-          <div className="mb-12 text-center">
-            <div className="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center text-2xl font-black mb-6 tracking-tight shadow-xl border border-white/10" style={{ background: "linear-gradient(135deg, var(--accent-primary), #a08040)", color: "#0c0f14" }}>
-              ST
+          {/* Floating Logo Badge */}
+          <div className="relative inline-flex items-center justify-center mb-8 group">
+            <div className="absolute inset-0 rounded-full blur-md opacity-40 group-hover:opacity-70 transition-opacity duration-700 animate-pulse-slow" style={{ background: "linear-gradient(to right, var(--accent-orange), white, var(--accent-green))" }}></div>
+            <div className="relative border rounded-full p-4 flex items-center justify-center shadow-2xl transition-colors duration-500" style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
+              <AshokaChakra className="w-12 h-12 animate-spin-slow" style={{ animationDuration: '20s', color: "var(--accent-primary)" }} />
             </div>
-            <h1 className="text-4xl font-black mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Scholarship Management</h1>
-            <p className="text-[var(--text-muted)] text-sm max-w-md mx-auto">Select your authorized role to enter the secure environment.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <button onClick={() => loginAs('applicant')} className="flex flex-col items-center p-8 bg-[var(--bg-card-alt)]/40 hover:bg-[var(--accent-primary-bg)] border border-[var(--border-subtle)] hover:border-[var(--accent-primary)] rounded-2xl transition-all duration-300 group">
-              <User className="text-[var(--text-muted)] group-hover:text-[var(--accent-primary)] mb-4 transition-colors duration-300" size={32} strokeWidth={1.5} />
-              <h2 className="font-bold text-sm">Applicant</h2>
-            </button>
-            
-            <button onClick={() => loginAs('ministry_admin')} className="flex flex-col items-center p-8 bg-[var(--bg-card-alt)]/40 hover:bg-[var(--accent-teal-bg)] border border-[var(--border-subtle)] hover:border-[var(--accent-teal)] rounded-2xl transition-all duration-300 group">
-              <Shield className="text-[var(--text-muted)] group-hover:text-[var(--accent-teal)] mb-4 transition-colors duration-300" size={32} strokeWidth={1.5} />
-              <h2 className="font-bold text-sm">Ministry Admin</h2>
-            </button>
-            
-            <button onClick={() => loginAs('institute_nodal_officer')} className="flex flex-col items-center p-8 bg-[var(--bg-card-alt)]/40 hover:bg-[var(--accent-green-bg)] border border-[var(--border-subtle)] hover:border-[var(--accent-green)] rounded-2xl transition-all duration-300 group">
-              <Building2 className="text-[var(--text-muted)] group-hover:text-[var(--accent-green)] mb-4 transition-colors duration-300" size={32} strokeWidth={1.5} />
-              <h2 className="font-bold text-sm">Institute Nodal Officer</h2>
-            </button>
-            
-            <button onClick={() => loginAs('scrutiny_officer')} className="flex flex-col items-center p-8 bg-[var(--bg-card-alt)]/40 hover:bg-[var(--accent-rose-bg)] border border-[var(--border-subtle)] hover:border-[var(--accent-rose)] rounded-2xl transition-all duration-300 group lg:col-start-1 lg:col-span-1">
-              <BookOpen className="text-[var(--text-muted)] group-hover:text-[var(--accent-rose)] mb-4 transition-colors duration-300" size={32} strokeWidth={1.5} />
-              <h2 className="font-bold text-sm">Scrutiny Officer</h2>
-            </button>
-
-            <button onClick={() => loginAs('selection_committee')} className="flex flex-col items-center p-8 bg-[var(--bg-card-alt)]/40 hover:bg-[var(--accent-orange-bg)] border border-[var(--border-subtle)] hover:border-[var(--accent-orange)] rounded-2xl transition-all duration-300 group md:col-span-2 lg:col-span-2">
-              <UserCheck className="text-[var(--text-muted)] group-hover:text-[var(--accent-orange)] mb-4 transition-colors duration-300" size={32} strokeWidth={1.5} />
-              <h2 className="font-bold text-sm">Selection Committee</h2>
-            </button>
+          {/* Subtitle */}
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="h-[1px] w-12" style={{ background: "linear-gradient(to right, transparent, var(--accent-orange))" }}></div>
+            <span className="uppercase tracking-[0.4em] text-[10px] font-bold transition-colors duration-500" style={{ color: "var(--text-muted)" }}>Ministry of Tribal Affairs</span>
+            <div className="h-[1px] w-12" style={{ background: "linear-gradient(to left, transparent, var(--accent-green))" }}></div>
           </div>
+
+          {/* Title */}
+          <h1 className="text-5xl md:text-7xl font-black mb-4 tracking-tighter drop-shadow-sm transition-colors duration-500" style={{ color: "var(--text-primary)" }}>
+            National Fellowship
+          </h1>
+          <p className="text-lg md:text-xl font-light max-w-2xl mx-auto tracking-wide transition-colors duration-500" style={{ color: "var(--text-muted)" }}>
+            Next-Generation Scholarship Management System. 
+            <br className="hidden md:block"/> Deterministic. Auditable. Secure.
+          </p>
+        </div>
+
+        {/* ── ROLE SELECTION GRID ── */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
+          {ROLES.map(({ role, label, icon: Icon, accent }, i) => (
+            <button
+              key={role}
+              onClick={() => loginAs(role)}
+              className="group relative h-48 md:h-56 rounded-3xl overflow-hidden border backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+              style={{ 
+                background: "var(--bg-card)",
+                borderColor: "var(--border-subtle)",
+                animation: mounted ? `slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.1}s forwards` : 'none',
+                opacity: 0,
+                boxShadow: `0 0 0 0 ${accent}00` 
+              }}
+            >
+              {/* Dynamic Hover Glow Background */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-xl"
+                style={{ background: `radial-gradient(circle at 50% 100%, ${accent}, transparent 70%)` }}
+              />
+
+              {/* Animated Border Sweep */}
+              <div 
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none before:absolute before:inset-0 before:p-[1px] before:rounded-3xl before:bg-gradient-to-b before:from-transparent before:via-[var(--accent)] before:to-transparent before:-mask-composite-exclude before:mask-border"
+                style={{ '--accent': accent } as React.CSSProperties}
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[var(--accent)] opacity-10 blur-md"></div>
+              </div>
+
+              {/* Content */}
+              <div className="relative z-10 h-full flex flex-col items-center justify-center p-6 text-center">
+                <div 
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 border group-hover:scale-110 transition-all duration-500 shadow-lg"
+                  style={{ background: "var(--bg-main)", borderColor: "var(--border-subtle)", color: "var(--text-muted)", ...({'--hover-color': accent} as any) }}
+                >
+                  <Icon size={26} strokeWidth={1.5} className="group-hover:text-[var(--hover-color)] transition-colors duration-500" />
+                </div>
+                <h2 className="font-bold text-sm transition-colors duration-300" style={{ color: "var(--text-primary)" }}>
+                  {label}
+                </h2>
+              </div>
+              
+              {/* Bottom Accent Line */}
+              <div 
+                className="absolute bottom-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-500 ease-out"
+                style={{ background: accent }}
+              />
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* ── CUSTOM CSS KEYFRAMES ── */}
+      <style>{`
+        @keyframes blob {
+          0% { transform: translate(0px, 0px) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .animate-blob {
+          animation: blob 15s infinite ease-in-out alternate;
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow linear infinite;
+        }
+        @keyframes pulse-slow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 4s ease-in-out infinite;
+        }
+        @keyframes slideUp {
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .mask-border {
+          -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+        }
+      `}</style>
     </div>
   );
 }

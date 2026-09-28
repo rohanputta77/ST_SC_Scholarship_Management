@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import {
   Search, Bell, LayoutDashboard, FileText, Users, BookOpen, Shield, SettingsIcon,
 } from "lucide-react";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
+
 
 import MinistryDashboard from "../../../views/MinistryDashboard";
 import ScrutinyWorkbench from "../../../views/ScrutinyWorkbench";
@@ -50,11 +52,23 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ background: "var(--bg-main)" }}>
+    <div className="flex h-screen overflow-hidden font-sans relative transition-colors duration-500" style={{ background: "var(--bg-main)", color: "var(--text-primary)" }}>
+      
+      {/* ── BACKGROUND AURORA (Matches Landing & Applicant) ── */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none mix-blend-screen" style={{ opacity: "var(--aurora-opacity)" }}>
+        <div className="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full blur-[120px] animate-pulse"
+             style={{ background: 'radial-gradient(circle, rgba(255,153,51,0.15) 0%, transparent 70%)' }} />
+        <div className="absolute top-[20%] right-[10%] w-[40vw] h-[40vw] rounded-full blur-[100px] animate-pulse"
+             style={{ background: 'radial-gradient(circle, rgba(0,82,163,0.15) 0%, transparent 70%)', animationDelay: '2s' }} />
+      </div>
+
       {/* ── Sidebar ── */}
-      <aside className="w-[52px] shrink-0 flex flex-col items-center py-5 gap-0.5 border-r" style={{ background: "var(--bg-sidebar)", borderColor: "var(--border-subtle)" }}>
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-extrabold mb-8 tracking-tight" style={{ background: "linear-gradient(135deg, var(--accent-primary), #a08040)", color: "#0c0f14" }}>
-          ST
+      <aside className="relative z-20 w-[64px] shrink-0 flex flex-col items-center py-6 gap-3 backdrop-blur-md border-r shadow-[4px_0_24px_rgba(0,0,0,0.1)] transition-colors duration-500"
+             style={{ background: "var(--bg-sidebar)", borderColor: "var(--border-subtle)" }}>
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF9933] via-white to-[#138808] p-[2px] shadow-sm mb-6">
+          <div className="w-full h-full rounded-full flex items-center justify-center" style={{ background: "var(--bg-main)" }}>
+            <span className="text-[12px] font-black tracking-tighter" style={{ color: "var(--text-primary)" }}>ST</span>
+          </div>
         </div>
         {SIDEBAR_ICONS.map((Icon, i) => {
           const tabId = TABS[i]?.id;
@@ -63,119 +77,136 @@ export default function Home() {
             <button
               key={i}
               onClick={() => tabId && setActive(tabId)}
-              className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 mb-0.5"
+              className="relative w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group"
               style={{
                 background: isActive ? "var(--accent-primary-bg)" : "transparent",
                 color: isActive ? "var(--accent-primary)" : "var(--text-muted)",
               }}
               title={TABS[i]?.label}
             >
-              <Icon size={17} strokeWidth={isActive ? 2.2 : 1.5} />
+              {isActive && (
+                <div className="absolute inset-0 rounded-xl border shadow-lg" style={{ borderColor: "var(--accent-primary)" }}></div>
+              )}
+              <Icon size={22} strokeWidth={isActive ? 2 : 1.5} className="transition-colors group-hover:opacity-80" />
             </button>
           );
         })}
       </aside>
 
       {/* ── Main ── */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="relative z-10 flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="h-12 shrink-0 flex items-center justify-between px-5 border-b" style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
+        <header className="h-16 shrink-0 flex items-center justify-between px-6 backdrop-blur-md border-b sticky top-0 z-50 transition-colors duration-500"
+                style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
           {/* Left: title */}
-          <h1 className="text-sm font-bold tracking-tight" style={{ color: "var(--text-primary)" }}>
-            Scholarship Management
-          </h1>
+          <div className="flex items-center gap-4">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "var(--text-muted)" }}>Ministry of Tribal Affairs</span>
+              <span className="text-sm font-black tracking-tight" style={{ color: "var(--text-primary)" }}>Official Dashboard Terminal</span>
+            </div>
+          </div>
 
           {/* Center: tabs */}
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-1 p-1 rounded-xl border" style={{ background: "var(--bg-main)", borderColor: "var(--border-subtle)" }}>
             {TABS.map((t) => (
               <button
                 key={t.id}
                 onClick={() => setActive(t.id)}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-200"
+                className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs font-bold transition-all duration-300"
                 style={{
-                  background: active === t.id ? "var(--accent-primary-bg)" : "transparent",
-                  color: active === t.id ? "var(--accent-primary)" : "var(--text-muted)",
+                  background: active === t.id ? "var(--bg-card)" : "transparent",
+                  color: active === t.id ? "var(--text-primary)" : "var(--text-muted)",
+                  boxShadow: active === t.id ? "0 0 10px rgba(0,0,0,0.05)" : "none"
                 }}
               >
-                <span className="text-[9px] font-mono opacity-50">{t.num}</span>
+                <span className="text-[10px] font-mono opacity-50 tracking-widest">{t.num}</span>
                 {t.label}
               </button>
             ))}
           </div>
 
-          {/* Right */}
-          <div className="flex items-center gap-3 relative">
+          {/* Right: search & profile */}
+          <div className="flex items-center gap-4">
             <div className="relative">
-              <Search size={13} className="absolute left-2 top-[7px]" style={{ color: "var(--text-muted)" }} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2" size={16} style={{ color: "var(--text-muted)" }} />
               <input
                 type="text"
-                placeholder="Search…"
+                placeholder="Lookup ID / Hash..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setIsSearching(true)}
                 onBlur={() => setTimeout(() => setIsSearching(false), 200)}
-                className="pl-7 pr-3 py-1 rounded-md text-[11px] outline-none border w-40 transition-all focus:w-64 focus:border-[var(--accent-primary)]"
-                style={{ background: "var(--bg-card-alt)", borderColor: "var(--border-card)", color: "var(--text-primary)" }}
+                className={`h-9 pl-9 pr-4 rounded-full border transition-all duration-300 text-sm focus:outline-none focus:ring-1 font-mono ${
+                  isSearching ? "w-64" : "w-48"
+                }`}
+                style={{ 
+                  background: "var(--bg-main)", 
+                  borderColor: isSearching ? "var(--accent-primary)" : "var(--border-subtle)",
+                  color: "var(--text-primary)",
+                  boxShadow: isSearching ? "0 0 0 1px var(--accent-primary)" : "none"
+                }}
               />
               {isSearching && searchQuery.length > 0 && (
-                <div className="absolute top-full left-0 mt-1 w-full rounded-md shadow-lg border p-1.5 z-50 flex flex-col gap-1" style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
-                    <div className="px-2 py-1.5 hover:bg-white/5 cursor-pointer rounded text-[11px] font-medium transition-colors" onClick={() => showToast(`Searching applicants for '${searchQuery}'`)}>
-                        <span style={{ color: "var(--accent-teal)" }}>Applicant:</span> {searchQuery}
+                <div className="absolute top-full left-0 mt-2 w-full rounded-xl shadow-2xl border p-2 z-50 flex flex-col gap-1 backdrop-blur-xl"
+                     style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
+                    <div className="px-3 py-2 hover:bg-black/5 cursor-pointer rounded-lg text-[11px] font-medium transition-colors" onClick={() => showToast(`Searching applicants for '${searchQuery}'`)} style={{ color: "var(--text-primary)" }}>
+                        <span style={{ color: "var(--accent-primary)" }}>Applicant:</span> {searchQuery}
                     </div>
-                    <div className="px-2 py-1.5 hover:bg-white/5 cursor-pointer rounded text-[11px] font-medium transition-colors" onClick={() => showToast(`Searching schemes for '${searchQuery}'`)}>
-                        <span style={{ color: "var(--accent-primary)" }}>Scheme:</span> Search in configurations
+                    <div className="px-3 py-2 hover:bg-black/5 cursor-pointer rounded-lg text-[11px] font-medium transition-colors" onClick={() => showToast(`Searching schemes for '${searchQuery}'`)} style={{ color: "var(--text-primary)" }}>
+                        <span style={{ color: "var(--accent-green)" }}>Scheme:</span> Search in configurations
                     </div>
                 </div>
               )}
             </div>
-            <button className="relative p-1 rounded-md hover:bg-white/5 transition-colors" style={{ color: "var(--text-muted)" }} onClick={() => showToast("No new notifications")}>
-              <Bell size={15} />
-              <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full" style={{ background: "var(--accent-rose)" }} />
+            
+            <button className="relative p-2 transition-colors" style={{ color: "var(--text-muted)" }} onClick={() => showToast("No new notifications")}>
+              <Bell size={20} />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.2)]" style={{ background: "var(--accent-orange)" }}></span>
             </button>
+
+            <div className="h-6 w-[1px]" style={{ background: "var(--border-subtle)" }}></div>
+
+            <ThemeSwitcher />
+
             <div className="relative">
-                <button 
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  onBlur={() => setTimeout(() => setShowProfileMenu(false), 200)}
-                  className="w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold cursor-pointer hover:opacity-80 transition-opacity" 
-                  style={{ background: "var(--accent-primary-bg)", color: "var(--accent-primary)", border: "1px solid rgba(201,169,110,0.2)" }}
-                >
-                  MO
-                </button>
-                
-                {showProfileMenu && (
-                    <div className="absolute top-full right-0 mt-1 w-28 rounded-md shadow-2xl border p-1 z-50" style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
-                        <button 
-                          onClick={handleLogout}
-                          className="w-full text-left px-3 py-2 hover:bg-white/5 cursor-pointer rounded text-[11px] font-bold transition-colors"
-                          style={{ color: "var(--accent-rose)" }}
-                        >
-                          Logout
-                        </button>
-                    </div>
-                )}
+              <button 
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                onBlur={() => setTimeout(() => setShowProfileMenu(false), 200)}
+                className="w-9 h-9 rounded-full border flex items-center justify-center text-xs font-bold shadow-md hover:shadow-lg transition-all"
+                style={{ background: "var(--accent-primary-bg)", borderColor: "var(--border-subtle)", color: "var(--accent-primary)" }}
+              >
+                MO
+              </button>
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-48 backdrop-blur-xl border rounded-xl shadow-2xl py-1 overflow-hidden animate-fadeIn z-50"
+                     style={{ background: "var(--bg-card)", borderColor: "var(--border-subtle)" }}>
+                  <div className="px-4 py-3 border-b" style={{ borderColor: "var(--border-subtle)" }}>
+                    <p className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>Ministry Admin</p>
+                    <p className="text-[10px] font-mono mt-0.5" style={{ color: "var(--text-muted)" }}>ID: GOV-992-X</p>
+                  </div>
+                  <button onClick={handleLogout} className="w-full text-left px-4 py-3 text-sm font-bold transition-colors hover:opacity-80"
+                          style={{ color: "var(--accent-orange)" }}>
+                    Sign Out Terminal
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>
 
-        {/* Content */}
-        <main className="flex-1 overflow-auto p-5" style={{ background: "var(--bg-main)" }}>
-          {renderView()}
+        {/* Content Body */}
+        <main className="flex-1 overflow-auto relative z-10 p-6">
+          <div className="max-w-7xl mx-auto h-full">
+            {renderView()}
+          </div>
         </main>
       </div>
 
-      {/* Toast */}
+      {/* Toast Notification */}
       {toast && (
-        <div
-          className="fixed bottom-4 right-4 z-50 px-4 py-2.5 rounded-lg shadow-2xl text-[12px] font-medium flex items-center gap-2 border"
-          style={{
-            background: "var(--bg-card)",
-            color: "var(--accent-teal)",
-            borderColor: "rgba(90,173,168,0.3)",
-            animation: "slideUp 0.3s ease-out",
-          }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--accent-teal)" }} />
-          {toast}
+        <div className="absolute bottom-6 right-6 bg-[#138808]/20 backdrop-blur-md border border-[#138808]/50 text-white px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(19,136,8,0.2)] flex items-center gap-3 animate-slideUp z-50">
+          <CheckCircle2 className="text-[#138808]" size={20} />
+          <span className="text-sm font-bold tracking-wide">{toast}</span>
         </div>
       )}
     </div>
