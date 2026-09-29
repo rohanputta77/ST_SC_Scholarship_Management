@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import {
-  Search, Bell, LayoutDashboard, FileText, Users, BookOpen, Shield, SettingsIcon,
+  Search, Bell, LayoutDashboard, FileText, Users, BookOpen, Shield, SettingsIcon, CheckCircle2,
 } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
